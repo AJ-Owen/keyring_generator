@@ -22,7 +22,7 @@ with open(name_file, "r") as file:
         # Generate a temporary OpenSCAD file with the substituted NAME
         scad_file = f"{output_folder}/{name}.scad"
         with open(template_file, "r") as template:
-            content = template.read().replace("{{NAME}}", f" {name} ")
+            content = template.read().replace("{{NAME}}", f"{name}")
         with open(scad_file, "w") as scad:
             scad.write(content)
 

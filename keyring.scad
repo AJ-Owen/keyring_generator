@@ -2,8 +2,9 @@
 NAME = "{{NAME}}";
 // #################################
 
-
-width = len(NAME)*7;
+icon_width = 15;
+text_width = len(NAME)*7 + 5;
+width = icon_width + text_width;
 depth = 15;
 thickness = 1;
 corner_radius = 1.5;
@@ -18,19 +19,19 @@ $fs = 0.4;
 module body(){
     hull()
     {
-        translate([0, 0, -corner_radius]) sphere(r=corner_radius,center=true);
-        translate([0, depth, -corner_radius]) sphere(r=corner_radius,center=true);
-        translate([width, 0, -corner_radius]) sphere(r=corner_radius,center=true);
-        translate([width, depth, -corner_radius]) sphere(r=corner_radius,center=true);
+        translate([0, 0, -corner_radius]) sphere(r=corner_radius);
+        translate([0, depth, -corner_radius]) sphere(r=corner_radius);
+        translate([width, 0, -corner_radius]) sphere(r=corner_radius);
+        translate([width, depth, -corner_radius]) sphere(r=corner_radius);
         translate([0, depth/2, -corner_radius*2])
         linear_extrude(corner_radius*2)
-        circle(r=keyring_radius, center=true);
+        circle(r=keyring_radius);
     }
 }
 
 module name_text(){
     linear_extrude(thickness)
-    translate([width/2,depth/2,-0.001])
+    translate([text_width/2,depth/2,-0.001])
     color("turquoise")
     text(str(" ", NAME), halign="center", valign="center", font="Ubuntu:style=Extra Bold Italic", size=8);
 }
@@ -38,7 +39,7 @@ module name_text(){
 module keyring_hole(){
     translate([2, depth/2, -corner_radius*4])
     linear_extrude(corner_radius*8)
-    circle(r=(keyring_radius-1), center=true);
+    circle(r=(keyring_radius-1));
 }
 
 module tag(){
@@ -50,16 +51,16 @@ module tag(){
     name_text();
 }
 
-module bone(){
-    scale(0.2)
-    translate([width,depth/2,-corner_radius*10])
-    linear_extrude(corner_radius)
-    import("/home/jowen/Downloads/dog-bone/dog-bone.svg", center=false);
+module icon(){
+    translate([text_width+(icon_width/2),depth/2,0])
+    linear_extrude(thickness)
+    //rotate(180)
+    scale(0.06)
+    import("/home/josh/repos/keyring_generator/icons/bear-face.svg", center=true);
 }
 
-difference(){
-    tag();
-    bone();
-}
+
+tag();
+icon();
 
 //bone();
