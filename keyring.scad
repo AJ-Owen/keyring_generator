@@ -33,7 +33,7 @@ module name_text(){
     linear_extrude(thickness)
     translate([text_width/2,depth/2,-0.001])
     color("turquoise")
-    text(str(" ", NAME), halign="center", valign="center", font="Ubuntu:style=Extra Bold Italic", size=8);
+    text(str(" ", NAME), halign="center", valign="center", font="Ubuntu Mono:style=Extra Bold Italic", size=8);
 }
 
 module keyring_hole(){
