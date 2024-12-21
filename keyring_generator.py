@@ -4,13 +4,17 @@ import os
 import subprocess
 import sys
 
-if len(sys.argv) > 1:
+if sys.argv[1]:
     name_file = sys.argv[1]
 else:
     name_file = "names.txt"
 
+if sys.argv[2]:
+    output_folder = sys.argv[2]
+else:
+    output_folder = "output_stl"
+
 template_file = "keyring.scad"
-output_folder = "output_stl"
 openscad_path = subprocess.run(["which", "openscad"], capture_output=True).stdout.strip()
 
 os.makedirs(output_folder, exist_ok=True)
