@@ -2,38 +2,66 @@
 
 import os
 import subprocess
+import argparse
 import sys
 
-if sys.argv[1]:
-    name_file = sys.argv[1]
-else:
-    name_file = "names.txt"
 
-if sys.argv[2]:
-    output_folder = sys.argv[2]
-else:
-    output_folder = "output_stl"
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Generate STL files from OpenSCAD templates with custom names and icons.")
+    parser.add_argument("--names", type=str, default="names.txt", required=True, help="Path to the file containing list of names.")
+    parser.add_argument("--output_dir", type=str, default="output_stl", help="Directory to save STL files.")
+    parser.add_argument("--icon", type=str, required=True, help="Path to the icon file for replacement.")
 
-template_file = "keyring.scad"
-openscad_path = subprocess.run(["which", "openscad"], capture_output=True).stdout.strip()
+    args = parser.parse_args()
 
-os.makedirs(output_folder, exist_ok=True)
+    # Validate files
+    if not os.path.isfile(args.names):
+        print(f"Error: Name file '{args.names}' not found.")
+        sys.exit(1)
 
-with open(name_file, "r") as file:
-    for line in file.readlines():
-        name = line.strip()
-        print(f"Working on: {name}")
-        # Generate a temporary OpenSCAD file with the substituted NAME
-        scad_file = f"{output_folder}/{name}.scad"
-        with open(template_file, "r") as template:
-            content = template.read().replace("{{NAME}}", f"{name}")
-        with open(scad_file, "w") as scad:
-            scad.write(content)
+    if not os.path.isfile(f"icons/{args.icon}"):
+        print(f"Error: Icon file '{args.icon}' not found.")
+        sys.exit(1)
 
-        # Generate the custom STL
-        stl_file = f"{output_folder}/{name}.stl"
-        subprocess.run([openscad_path, "-o", stl_file, scad_file])
-        os.remove(scad_file)
-        print(f"Generated: {stl_file}")
+    return args
 
 
+def generate_stl(name, icon, output_folder, template_file, openscad_path):
+    scad_file = f"{output_folder}/{name}.scad"
+    stl_file = f"{output_folder}/{name}.stl"
+
+    # Substitute template placeholders
+    with open(template_file, "r") as template:
+        content = template.read().replace("{{NAME}}", name).replace("{{ICON}}", icon)
+
+    with open(scad_file, "w") as scad:
+        scad.write(content)
+
+    # Generate STL using OpenSCAD
+    subprocess.run([openscad_path, "-o", stl_file, scad_file])
+    os.remove(scad_file)
+    print(f"Generated: {stl_file}")
+
+
+def main():
+    args = parse_arguments()
+
+    template_file = "keyring.scad"
+    openscad_path = subprocess.run(["which", "openscad"], capture_output=True).stdout.strip()
+
+    if not openscad_path:
+        print("Error: OpenSCAD not found. Please install it and ensure it's in your PATH.")
+        sys.exit(1)
+
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    with open(args.names, "r") as file:
+        for line in file:
+            name = line.strip()
+            if name:
+                print(f"Processing: {name}")
+                generate_stl(name, args.icon, args.output_dir, template_file, openscad_path)
+
+
+if __name__ == "__main__":
+    main()

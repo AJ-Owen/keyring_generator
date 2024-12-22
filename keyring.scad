@@ -56,7 +56,7 @@ module icon(){
     linear_extrude(thickness)
     //rotate(180)
     scale(0.06)
-    import("/home/josh/repos/keyring_generator/icons/bear-face.svg", center=true);
+    import("/home/josh/repos/keyring_generator/icons/{{ICON}}", center=true);
 }
 
 
