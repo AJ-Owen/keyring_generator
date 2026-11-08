@@ -11,7 +11,7 @@ def parse_args():
     parser.add_argument("--names_file", type=str, help="Path to the file containing list of names.")
     parser.add_argument("--name", type=str, help="A single name to generate a keyring for.")
     parser.add_argument("--output_dir", type=str, default="output_stl", help="Directory to save STL files.")
-    parser.add_argument("--icon", type=str, required=True, help="Path to the icon file for replacement.")
+    parser.add_argument("--icon", type=str, default="", help="Optional icon file in the icons directory.")
 
     args = parser.parse_args()
 
@@ -24,7 +24,7 @@ def parse_args():
         print(f"Error: Name file '{args.names_file}' not found.")
         sys.exit(1)
 
-    if not os.path.isfile(f"icons/{args.icon}"):
+    if args.icon and not os.path.isfile(f"icons/{args.icon}"):
         print(f"Error: Icon file '{args.icon}' not found.")
         sys.exit(1)
 

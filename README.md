@@ -28,7 +28,19 @@ Using a single name passed in as an arg
 Using a list of names
 `./keyring_generator.py --names_list "names.txt" --icon horse-shoe.svg`
 
+Without an icon (`--icon` is optional)
+`./keyring_generator.py --name "hello world"`
+
 More info on args provided in `--help`
+
+## Icons
+
+Icons are SVGs in the `icons` directory. Before rendering, each icon is automatically cleaned so OpenSCAD draws it the way a browser would (the original file is not modified):
+
+- Invisible shapes (no fill and no stroke) and canvas-sized background rectangles are removed, as OpenSCAD would otherwise render them as a solid block
+- Line-drawn (stroke-only) icons are converted to solid shapes using [Inkscape](https://inkscape.org/), as OpenSCAD otherwise leaves gaps where lines overlap. Inkscape must be on your `PATH` for this step
+
+Each step is logged with an `[icon]` prefix. Use `--no_clean` to use an icon exactly as-is.
 
 ## Fonts
 

@@ -1,10 +1,12 @@
 // #################################
 NAME = "{{NAME}}";
+// Full path to the icon, or empty for a keyring without an icon
+ICON = "{{ICON}}";
 // "body", "inlay" or "all" - set via -D PART="..." when exporting
 PART = "all";
 // #################################
 
-icon_width = 15;
+icon_width = ICON == "" ? 0 : 15;
 text_width = len(NAME)*7 + 5;
 width = icon_width + text_width;
 depth = 15;
@@ -43,10 +45,11 @@ module keyring_hole(){
 }
 
 module icon(){
+    if (ICON != "")
     translate([text_width+(icon_width/2),depth/2])
     //rotate(180)
     scale(0.06)
-    import("/home/josh/repos/keyring_generator/icons/{{ICON}}", center=true);
+    import(ICON, center=true);
 }
 
 // Text and icon outline, extruded down from the top surface (z=0) of the body
