@@ -49,7 +49,6 @@ def parse_args():
 
 def generate_stl(name, icon, output_folder, template_file, openscad_path):
     scad_file = f"{output_folder}/{name}.scad"
-    stl_file = f"{output_folder}/{name}.stl"
 
     # Substitute template placeholders
     with open(template_file, "r") as template:
@@ -58,10 +57,16 @@ def generate_stl(name, icon, output_folder, template_file, openscad_path):
     with open(scad_file, "w") as scad:
         scad.write(content)
 
-    # Generate STL using OpenSCAD
-    subprocess.run([openscad_path, "-o", stl_file, scad_file])
+    # Generate one STL per part so each can be assigned its own filament
+    for part in ("body", "inlay"):
+        stl_file = f"{output_folder}/{name}_{part}.stl"
+        result = subprocess.run([openscad_path, "-o", stl_file, "-D", f'PART="{part}"', scad_file])
+        if result.returncode != 0:
+            os.remove(scad_file)
+            print(f"Error: OpenSCAD failed to generate {stl_file}")
+            sys.exit(1)
+        print(f"Generated: {stl_file}")
     os.remove(scad_file)
-    print(f"Generated: {stl_file}")
 
 
 def main():

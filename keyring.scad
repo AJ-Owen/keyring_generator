@@ -1,5 +1,7 @@
 // #################################
 NAME = "{{NAME}}";
+// "body", "inlay" or "all" - set via -D PART="..." when exporting
+PART = "all";
 // #################################
 
 icon_width = 15;
@@ -30,9 +32,7 @@ module body(){
 }
 
 module name_text(){
-    linear_extrude(thickness)
-    translate([text_width/2,depth/2,-0.001])
-    color("turquoise")
+    translate([text_width/2,depth/2])
     text(str(" ", NAME), halign="center", valign="center", font="Ubuntu Mono:style=Extra Bold Italic", size=8);
 }
 
@@ -42,25 +42,34 @@ module keyring_hole(){
     circle(r=(keyring_radius-1));
 }
 
-module tag(){
-    difference(){
-        body();
-        keyring_hole();
-    }
-
-    name_text();
-}
-
 module icon(){
-    translate([text_width+(icon_width/2),depth/2,0])
-    linear_extrude(thickness)
+    translate([text_width+(icon_width/2),depth/2])
     //rotate(180)
     scale(0.06)
     import("/home/josh/repos/keyring_generator/icons/{{ICON}}", center=true);
 }
 
+// Text and icon outline, extruded down from the top surface (z=0) of the body
+module inlay(height=thickness){
+    translate([0, 0, -thickness])
+    linear_extrude(height)
+    {
+        name_text();
+        icon();
+    }
+}
 
-tag();
-icon();
+module tag(){
+    difference(){
+        body();
+        keyring_hole();
+        // Extend the cut above the surface to avoid coplanar faces
+        inlay(thickness + 1);
+    }
+}
+
+
+if (PART == "body" || PART == "all") color("black") tag();
+if (PART == "inlay" || PART == "all") color("orange") inlay();
 
 //bone();

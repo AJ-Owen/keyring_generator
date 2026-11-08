@@ -3,7 +3,9 @@
 - Ensure openscad is installed
 - Add a list of names to "names.txt", or run with a single name
 - Run the python file
-- Import the generated `.stl`s into BambuStudio
+- Each name generates two STLs: `<name>_body.stl` and `<name>_inlay.stl` (the text and icon, set 1mm into the body and flush with its top)
+- Import both `.stl`s into BambuStudio together and choose "Yes" when asked to load them as a single object with multiple parts
+- Assign the inlay part your orange filament and the body its own filament in the AMS
 - PRINT!
 
 ## Example usage
